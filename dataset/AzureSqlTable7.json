@@ -1,0 +1,36 @@
+{
+	"name": "AzureSqlTable7",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "sno",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Club",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Player_names",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Goals",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Best_scorers_Destination"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

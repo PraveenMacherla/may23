@@ -1,0 +1,9 @@
+{
+	"name": "biprogramadf",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "95a8836c-27bd-44e1-b6ad-c7df4f018267",
+		"tenantId": "080ddedf-6bfa-4721-b63d-f6007396ccc6"
+	}
+}

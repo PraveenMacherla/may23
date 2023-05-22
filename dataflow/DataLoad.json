@@ -1,0 +1,165 @@
+{
+	"name": "DataLoad",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "MobileTable_Source",
+						"type": "DatasetReference"
+					},
+					"name": "MobileTableSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "MobileTable_Destination",
+						"type": "DatasetReference"
+					},
+					"name": "MobileTableDestination"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "MobileTable_Destination",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "MobileTable_Destination",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          sno_Source as integer,",
+				"          CompanyName as string,",
+				"          Brand as string,",
+				"          Model as string,",
+				"          price as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> MobileTableSource",
+				"source(output(",
+				"          SNo_Desti as integer,",
+				"          CompanyName as string,",
+				"          Brand as string,",
+				"          Model as string,",
+				"          price as double,",
+				"          ExpiryDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> MobileTableDestination",
+				"select3 derive(ExpirtyDateDC = currentUTC('IST')) ~> derivedColumn1",
+				"select2, select1 lookup(sno_Source == SNo_Desti,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"MobileTableDestination select(mapColumn(",
+				"          SNo_Desti",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"MobileTableSource select(mapColumn(",
+				"          sno_Source",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"derivedColumn1 filter(!isNull(SNo_Desti)) ~> filter1",
+				"filter1 alterRow(updateIf(true())) ~> alterRow1",
+				"lookup1 select(mapColumn(",
+				"          SNo_Desti",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"MobileTableSource derive(NewExpiryDate = '9999-12-12 00:00:00') ~> derivedColumn2",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SNo_Desti as integer,",
+				"          CompanyName as string,",
+				"          Brand as string,",
+				"          Model as string,",
+				"          price as double,",
+				"          ExpiryDate as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['SNo_Desti'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          SNo_Desti,",
+				"          ExpiryDate = ExpirtyDateDC",
+				"     )) ~> sink1",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SNo_Desti as integer,",
+				"          CompanyName as string,",
+				"          Brand as string,",
+				"          Model as string,",
+				"          price as double,",
+				"          ExpiryDate as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 2,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          SNo_Desti = sno_Source,",
+				"          CompanyName,",
+				"          Brand,",
+				"          Model,",
+				"          price,",
+				"          ExpiryDate = NewExpiryDate",
+				"     )) ~> sink2"
+			]
+		}
+	}
+}

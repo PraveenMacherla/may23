@@ -1,0 +1,40 @@
+{
+	"name": "08_sendemail",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-12.centralindia.logic.azure.com:443/workflows/b47f424c5f2f416caed58532d496d5a2/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ulKvotpaa7Q_ldYDoh4rce2hmDpFrAF6taufRfWqiuw",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"SuccessMessage": "Current pipeline ran successfully",
+						"DataFactoryName": "@{pipeline().DataFactory}",
+						"PipelineName": "@{pipeline().Pipeline}",
+						"Subject": "Pipeline finished!",
+						"emailto": "Shrewdyema@gmail.com,cpatrasco7@gmail.com"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "PreviousPipelines"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-28T03:01:08Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

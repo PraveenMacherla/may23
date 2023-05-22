@@ -1,0 +1,26 @@
+{
+	"name": "03_executepipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "01_copydata",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "PreviousPipelines"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-28T03:01:08Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
